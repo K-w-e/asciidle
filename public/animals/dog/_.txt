@@ -1,0 +1,7 @@
+dog
+canidae
+pup
+puppy
+bark
+woof
+arf

@@ -1,0 +1,7 @@
+cow
+bull
+veal
+calf
+oxen
+steer
+cattle

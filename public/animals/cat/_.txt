@@ -1,0 +1,5 @@
+cat
+kitten
+kitty
+felines
+lynx

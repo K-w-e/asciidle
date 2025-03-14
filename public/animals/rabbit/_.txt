@@ -1,0 +1,9 @@
+rabbit
+mammal
+pikas
+hares
+buck
+doe
+burrows
+warren
+bunny
