@@ -24,11 +24,13 @@ export default function GamePage() {
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [difficulty, setDifficulty] = useState<string | undefined>(undefined)
+  const [includeText, setIncludeText] = useState<boolean | undefined>(undefined)
 
   useEffect(() => {
     if (!router.isReady) return
 
     setDifficulty(router.query.difficulty as string)
+    setIncludeText(router.query.includeText as unknown as boolean)
 
     fetchArt()
   }, [router.isReady, router.query.difficulty])
@@ -36,8 +38,9 @@ export default function GamePage() {
   const fetchArt = () => {
     let url: string = "/api/ascii-art";
 
-    if (difficulty == 'text') {
-      url = '/api/generate-ascii'
+    if (includeText) {
+      const urls = ['/api/ascii-art', '/api/generate-ascii'];
+      url = urls[Math.floor(Math.random() * urls.length)];
     }
 
     fetch(url)
@@ -62,7 +65,7 @@ export default function GamePage() {
     if (isCorrect) {
       setWin(true)
       setGameOver(true)
-      setMessage('Complimenti! Hai indovinato!')
+      setMessage('Congratulation! You won!')
     } else {
       const newAttempts = attempts + 1
       setAttempts(newAttempts)
@@ -70,9 +73,9 @@ export default function GamePage() {
 
       if (newAttempts >= maxAttempts) {
         setGameOver(true)
-        setMessage(`Hai esaurito i tentativi! La risposta corretta erano: ${asciiArtData.answer}`)
+        setMessage(`You lost! Correct answers: ${asciiArtData.answer}`)
       } else {
-        setMessage(`Tentativo errato! Ti rimangono ${maxAttempts - newAttempts} tentativi.`)
+        setMessage(`Wrong attempt! You have ${maxAttempts - newAttempts} attempts left.`)
       }
     }
   }
@@ -93,7 +96,7 @@ export default function GamePage() {
   if (isLoading || !difficulty) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
-        <p className="text-xl">Caricamento...</p>
+        <p className="text-xl">Loading...</p>
       </div>
     )
   }
@@ -112,8 +115,8 @@ export default function GamePage() {
               <Link href="/">ASCIIDLE</Link>
             </h1>
             <div className="text-right">
-              <p className="text-sm">Modalità: {difficulty == 'easy' ? 'Facile' : difficulty == 'timed' ? 'A Tempo' : 'Bogo'}</p>
-              <p className="text-sm">Tentativi: {attempts}/{maxAttempts}</p>
+              <p className="text-sm">Mode: {difficulty == 'easy' ? 'Easy' : difficulty == 'timed' ? 'Timed' : 'Bogo'}</p>
+              <p className="text-sm">Attempts: {attempts}/{maxAttempts}</p>
             </div>
           </div>
 
@@ -137,7 +140,7 @@ export default function GamePage() {
               </div>
 
               {message && (
-                <div className={`p-3 mb-4 rounded-md ${message.includes('Complimenti') ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
+                <div className={`p-3 mb-4 rounded-md ${message.includes('Congratulation') ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
                   {message}
                 </div>
               )}
@@ -147,11 +150,11 @@ export default function GamePage() {
                   type="text"
                   value={guess}
                   onChange={(e) => setGuess(e.target.value)}
-                  placeholder="Cosa rappresenta questo disegno?"
+                  placeholder="What does this drawing represent?"
                   className="flex-1 bg-slate-800 border-green-500 text-white"
                 />
                 <Button type="submit" className="bg-green-600 hover:bg-green-700">
-                  Indovina
+                  Guess
                 </Button>
               </form>
             </>
